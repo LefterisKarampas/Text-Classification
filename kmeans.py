@@ -1,51 +1,57 @@
 import pandas as pd
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import TruncatedSVD
 import nltk
 from sklearn.cluster import KMeans
+from sklearn.feature_extraction import text
+from sklearn.metrics.pairwise import cosine_similarity, pairwise_distances
+from sklearn.preprocessing import StandardScaler
+
+
+
 
 pathToFile = '../train_set.csv'
 
 df = pd.read_csv(pathToFile, sep='\t')
 A = np.array(df)
 
-stop_words=['Antonia','Nikos','Nikolas']
+#stop_words = []
+stop_words = text.ENGLISH_STOP_WORDS
 count_vect = CountVectorizer(stop_words = stop_words)
 train_counts = count_vect.fit_transform(df.Content)
 svd = TruncatedSVD(n_components=5, n_iter=7, random_state=42)
-#train_counts.shape
-print (train_counts)
-X = svd.fit(train_counts)
+svd.fit(train_counts)
 km = KMeans(n_clusters=5, random_state=1).fit(svd.transform(train_counts))
-
+#nltk.cluster.KMeansClusterer(num_means=5, distance=cosine_similarity)
+#kmeansClusterer.cluster(train_counts, True)
 cluster_stats = [[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]
 labels = km.labels_.tolist()
 
 for i,label in enumerate(labels):
-	if (A[i][3] is "Politics"):
+	if (A[i][4] == "Politics"):
 		cluster_stats[label][0] += 1
 		cluster_stats[label][5] += 1
-	elif (A[i][3] is "Film"):
+	elif (A[i][4] == "Film"):
 		cluster_stats[label][1] += 1
 		cluster_stats[label][5] += 1
-	elif (A[i][3] is "Footbal"):
+	elif (A[i][4] == "Football"):
 		cluster_stats[label][2] += 1
 		cluster_stats[label][5] += 1
-	elif (A[i][3] is "Business"):
+	elif (A[i][4] == "Business"):
 		cluster_stats[label][3] += 1
 		cluster_stats[label][5] += 1
 	else: #Technology
 		cluster_stats[label][4] += 1
 		cluster_stats[label][5] += 1
 
-categories = ['Politics', 'Film', 'Football', 'Business', 'Technology']
+categories = ['Politics\t', 'Film\t\t', 'Football\t', 'Business\t', 'Technology\t']
 
 for i in range(5):
-	print ("Cluster ", i)
+	print("Cluster {0:d}:".format(i+1))
 	for j,cat in enumerate(categories):
-		print ('\t', cat, ': ', cluster_stats[i][j] / cluster_stats[i][5], '%')
+		print ('\t', cat, ": {0:.2f}%".format(cluster_stats[i][j] *100 / cluster_stats[i][5]))
+	print('\n')
 
 #the function that finds the distance (metric function) is passed to KmeansClusterer
 #kmeansClusterer = nltk.cluster.KMeansClusterer(num_means=5, distance=cosine_similarity)

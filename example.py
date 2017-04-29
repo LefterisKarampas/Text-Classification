@@ -12,6 +12,8 @@ from sklearn.cluster import KMeans
 pathToFile = '/home/lef/Desktop/train_set.csv'
  
 df = pd.read_csv(pathToFile, sep='\t')
+for i in len(df):
+	printf(df[i])
 stop_words=['Antonia','Nikos','Nikolas']
 count_vect = CountVectorizer(stop_words = stop_words)
 svd = TruncatedSVD(n_components=5, n_iter=7, random_state=42)

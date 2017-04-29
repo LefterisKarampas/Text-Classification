@@ -56,3 +56,4 @@ for category in categories:
 	plt.imshow(wordcloud)
 	plt.axis('off')
 	plt.show()
+
