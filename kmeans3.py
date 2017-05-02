@@ -20,15 +20,15 @@ stop_words = text.ENGLISH_STOP_WORDS
 cv = CountVectorizer(stop_words = stop_words)
 svd = TruncatedSVD(n_components=2, n_iter=5, random_state=42)
 
-c_vector = cv.fit_transform(df.Content)
+c_vector = cv.fit_transform(df.Content.iloc[0:100])
 reduced_vector = svd.fit_transform(c_vector)
 l_of_lists = reduced_vector.tolist()
+#print (l_of_lists)
+# for f in l_of_lists:
+# 	print (f)
 np_vector = [np.array([f]) for f in l_of_lists]
 
-print (l_of_lists[0])
-print (np_vector[0])
-
-print ("Preprocessing Done!")
+print ("Preprocessing Done!Starting kmeans")
 km = nltk.cluster.KMeansClusterer(num_means=5, distance=cosine_similarity, avoid_empty_clusters=True)
 clusters = km.cluster(np_vector)
 print (clusters)
