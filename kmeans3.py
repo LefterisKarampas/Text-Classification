@@ -33,7 +33,7 @@ km = nltk.cluster.KMeansClusterer(num_means=5, distance=cosine_similarity, avoid
 clusters = km.cluster(np_vector)
 print (clusters)
 cluster_stats = [[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]
-labels = clusters.tolist()
+labels = clusters
 
 for i,label in enumerate(labels):
 	if (A[i][4] == "Politics"):
