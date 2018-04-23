@@ -56,6 +56,9 @@ mclf.fit(Scaler_X,y)
 sclf = svm.SVC(kernel='linear', C = 1)
 sclf.fit(lsa_X,y)
 
+myknn = knn.KNN(5)
+myknn.fit(lsa_X,y)
+
 #Random_Forest
 RFy_pred = rclf.predict(lsa_Y)
 predicted_categories = le.inverse_transform(RFy_pred)
@@ -73,8 +76,7 @@ SVMy_pred = sclf.predict(lsa_Y)
 predicted_categories = le.inverse_transform(SVMy_pred)
 print classification_report(y_test, SVMy_pred, target_names=list(le.classes_))
 
-myknn = knn.KNN(5)
-myknn.fit(lsa_X,y)
+#MY_KNN
 KNN_pred = myknn.predict(lsa_Y)
 predicted_categories = le.inverse_transform(KNN_pred)
 print classification_report(y_test, KNN_pred, target_names=list(le.classes_))
