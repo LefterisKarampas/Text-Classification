@@ -12,12 +12,15 @@ from sklearn import preprocessing
 from sklearn.cross_validation import train_test_split
 from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import KFold,cross_val_score
+from sklearn.pipeline import make_pipeline
+from sklearn import cross_validation
 import knn
+
 
 #Read Train Data
 data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-data = data[0:1000]
+data = data[0:2000]
 
 train_data ,test_data = train_test_split(data,test_size=0.3)
 
@@ -38,7 +41,7 @@ Y = tfid_vectorizer.transform(test_data['Content']+5*test_data['Title'])
 
 
 #LSA
-lsa = TruncatedSVD(n_components=5, n_iter=7, random_state=42)
+lsa = TruncatedSVD(n_components=25, n_iter=7, random_state=42)
 Scaler = MinMaxScaler(copy=True, feature_range=(50, 100))
 lsa_X = lsa.fit_transform(X)
 lsa_Y = lsa.fit_transform(Y)
@@ -53,11 +56,13 @@ rclf.fit(lsa_X, y)
 mclf = MultinomialNB(alpha=0.01)
 mclf.fit(Scaler_X,y)
 
-sclf = svm.SVC(kernel='linear', C = 1)
+sclf = svm.SVC(kernel='rbf', C = 10,gamma=1)
 sclf.fit(lsa_X,y)
 
-myknn = knn.KNN(5)
+myknn = knn.KNN(20)
 myknn.fit(lsa_X,y)
+
+
 
 #Random_Forest
 RFy_pred = rclf.predict(lsa_Y)
@@ -80,3 +85,5 @@ print classification_report(y_test, SVMy_pred, target_names=list(le.classes_))
 KNN_pred = myknn.predict(lsa_Y)
 predicted_categories = le.inverse_transform(KNN_pred)
 print classification_report(y_test, KNN_pred, target_names=list(le.classes_))
+
+
