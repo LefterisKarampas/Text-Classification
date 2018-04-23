@@ -19,7 +19,7 @@ import knn
 
 
 data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-#data = data[0:2000]
+data = data[0:400]
 
 
 le = preprocessing.LabelEncoder()
@@ -63,7 +63,7 @@ classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), sclf)
 scores = cross_validation.cross_val_score(classifier_pipeline, lsa_X, y, cv=10)
 print('SVM: ' + str(scores.mean()))
 
-#classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), myknn)
-#scores = cross_validation.cross_val_score(classifier_pipeline, lsa_X, y, cv=10)
-#print('KNN: ' + str(scores.mean()))
+classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), myknn)
+scores = cross_validation.cross_val_score(classifier_pipeline, lsa_X, y, cv=10)
+print('KNN: ' + str(scores.mean()))
 

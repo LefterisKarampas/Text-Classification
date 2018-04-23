@@ -1,3 +1,4 @@
+from __future__ import division
 import math
 import operator
 
@@ -19,6 +20,16 @@ def euclideanDistance(array1, array2):
 class KNN:
   def __init__(self, k):
     self.k = k;
+
+  def score(self, testSet, testSetLabels):
+    predictedLabels = self.predict(testSet)
+    count = 0
+    size = len(predictedLabels)
+    for i in range(size):
+      if predictedLabels[i] == testSetLabels[i]:
+        count = count + 1
+
+    return count / size
 
 
   #trainSet must be and array
