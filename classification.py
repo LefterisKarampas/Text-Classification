@@ -16,10 +16,10 @@ from nltk.stem.snowball import SnowballStemmer
 
 #Read Train Data
 train_data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-train_data = train_data[0:2000]
+#train_data = train_data[0:2000]
 
 test_data = pd.read_csv('../datasets/test_set.csv', sep="\t")
-test_data = test_data[0:100]
+#test_data = test_data[0:100]
 
 
 #Initialize Encoder
@@ -65,24 +65,31 @@ sclf.fit(lsa_X,y)
 myknn = knn.KNN(50)
 myknn.fit(lsa_X,y)
 
-#Random_Forest
-RFy_pred = rclf.predict(lsa_Y)
-predicted_categories = le.inverse_transform(RFy_pred)
-print(predicted_categories)
+# #Random_Forest
+# RFy_pred = rclf.predict(lsa_Y)
+# predicted_categories = le.inverse_transform(RFy_pred)
+# print(predicted_categories)
 
-#MultinomiaNB
+# #MultinomiaNB
 MNBy_pred = mclf.predict(Scaler_Y)
 predicted_categories = le.inverse_transform(MNBy_pred)
-print(predicted_categories)
+#print(predicted_categories)
 
-#SVM
-SVMy_pred = sclf.predict(lsa_Y)
-predicted_categories = le.inverse_transform(SVMy_pred)
-print(predicted_categories)
+# #SVM
+# SVMy_pred = sclf.predict(lsa_Y)
+# predicted_categories = le.inverse_transform(SVMy_pred)
+# print(predicted_categories)
 
 
-#KNN
-KNNy_pred = myknn.predict(lsa_Y)
-predicted_categories = le.inverse_transform(KNNy_pred)
-print(predicted_categories)
+# #KNN
+# KNNy_pred = myknn.predict(lsa_Y)
+# predicted_categories = le.inverse_transform(KNNy_pred)
+# print(predicted_categories)
 
+
+fd = open('testSet_categories.csv','w')
+fd.write("ID"+"\t"+"Predicted_Category\n")
+for i in range(len(test_data['Id'])):
+	fd.write(str(test_data['Id'][i])+"\t"+predicted_categories[i]+"\n")
+
+fd.close()

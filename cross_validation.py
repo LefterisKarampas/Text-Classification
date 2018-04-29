@@ -22,7 +22,7 @@ import knn
 
 
 data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-data = data[0:400]
+data = data[0:5000]
 
 
 le = preprocessing.LabelEncoder()
