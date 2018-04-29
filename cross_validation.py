@@ -65,10 +65,7 @@ csv_out[1].append(np.mean(scores['test_accuracy']))
 csv_out[2].append(np.mean(scores['test_precision_macro']))
 csv_out[3].append(np.mean(scores['test_recall_macro']))
 csv_out[4].append(np.mean(scores['test_f1_macro']))
-print('Random_Forest: \n' +"\tAccuracy: "+str(np.mean(scores['test_accuracy']))+"\n")
-print("\tPrecision: "+str(np.mean(scores['test_precision_macro']))+"\n")
-print("\tRecall: "+str(np.mean(scores['test_recall_macro']))+"\n")
-print("\tF-measure: "+str(np.mean(scores['test_f1_macro']))+"\n\n")
+
 
 
 classifier_pipeline = make_pipeline(preprocessing.MinMaxScaler(feature_range=(50, 100)), mclf)
@@ -77,10 +74,6 @@ csv_out[1].append(np.mean(scores['test_accuracy']))
 csv_out[2].append(np.mean(scores['test_precision_macro']))
 csv_out[3].append(np.mean(scores['test_recall_macro']))
 csv_out[4].append(np.mean(scores['test_f1_macro']))
-print('MultinomiaNB: \n' +"\tAccuracy: "+str(np.mean(scores['test_accuracy']))+"\n")
-print("\tPrecision: "+str(np.mean(scores['test_precision_macro']))+"\n")
-print("\tRecall: "+str(np.mean(scores['test_recall_macro']))+"\n")
-print("\tF-measure: "+str(np.mean(scores['test_f1_macro']))+"\n\n")
 
 
 classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), sclf)
@@ -89,10 +82,7 @@ csv_out[1].append(np.mean(scores['test_accuracy']))
 csv_out[2].append(np.mean(scores['test_precision_macro']))
 csv_out[3].append(np.mean(scores['test_recall_macro']))
 csv_out[4].append(np.mean(scores['test_f1_macro']))
-print('SVM: \n' +"\tAccuracy: "+str(np.mean(scores['test_accuracy']))+"\n")
-print("\tPrecision: "+str(np.mean(scores['test_precision_macro']))+"\n")
-print("\tRecall: "+str(np.mean(scores['test_recall_macro']))+"\n")
-print("\tF-measure: "+str(np.mean(scores['test_f1_macro']))+"\n\n")
+
 
 classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), myknn)
 scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
@@ -100,10 +90,6 @@ csv_out[1].append(np.mean(scores['test_accuracy']))
 csv_out[2].append(np.mean(scores['test_precision_macro']))
 csv_out[3].append(np.mean(scores['test_recall_macro']))
 csv_out[4].append(np.mean(scores['test_f1_macro']))
-print('KNN: \n' +"\tAccuracy: "+str(np.mean(scores['test_accuracy']))+"\n")
-print("\tPrecision: "+str(np.mean(scores['test_precision_macro']))+"\n")
-print("\tRecall: "+str(np.mean(scores['test_recall_macro']))+"\n")
-print("\tF-measure: "+str(np.mean(scores['test_f1_macro']))+"\n\n")
 
 
 fd = open('EvalueationMetric_10fold.csv','w')
