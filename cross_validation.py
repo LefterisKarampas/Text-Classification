@@ -22,19 +22,21 @@ import knn
 
 
 data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-data = data[0:100]
+data = data[0:400]
 
 
 le = preprocessing.LabelEncoder()
 le.fit(data["Category"])
 y = le.transform(data["Category"])
 
-
+X = data['Content']+10*(" "+data['Title'])
 #Initialize CounterVectorizer
 #count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS)
-tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False,stop_words=ENGLISH_STOP_WORDS)
-#X = count_vectorizer.fit_transform(data['Content']+5*data['Title'])
-X = tfid_vectorizer.fit_transform(data['Content']+10*(" "+data['Title']))
+#X = count_vectorizer.fit_transform(data['Content']+10*(" "+data['Title']))
+
+#Initialize Transformer
+tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False)
+X = tfid_vectorizer.fit_transform(X)
 
 #LSA - SVD
 lsa = TruncatedSVD(n_components=25, n_iter=7, random_state=42)
@@ -48,7 +50,7 @@ mclf = MultinomialNB(alpha=0.01)
 
 sclf = svm.SVC(kernel='linear', C = 1000,gamma=0.1)
 
-myknn = knn.KNN(50)
+myknn = knn.KNN(20)
 
 
 csv_out = [['Statistic Measure','Naive Bayes','Random_Forest','SVM','KNN','My Method'],
@@ -59,43 +61,28 @@ csv_out = [['Statistic Measure','Naive Bayes','Random_Forest','SVM','KNN','My Me
 
 scoring = ['accuracy','precision_macro', 'recall_macro','f1_macro']
 
-classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), rclf)
-scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
-csv_out[1].append(np.mean(scores['test_accuracy']))
-csv_out[2].append(np.mean(scores['test_precision_macro']))
-csv_out[3].append(np.mean(scores['test_recall_macro']))
-csv_out[4].append(np.mean(scores['test_f1_macro']))
+classifiers = [rclf,mclf,sclf,myknn]
+
+for classifier in classifiers:
+	if(classifier == mclf):
+		classifier_pipeline = make_pipeline(preprocessing.MinMaxScaler(feature_range=(50, 100)), classifier)
+	else:	
+		classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), classifier)
+	scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
+	csv_out[1].append(np.mean(scores['test_accuracy']))
+	csv_out[2].append(np.mean(scores['test_precision_macro']))
+	csv_out[3].append(np.mean(scores['test_recall_macro']))
+	csv_out[4].append(np.mean(scores['test_f1_macro']))
 
 
 
-classifier_pipeline = make_pipeline(preprocessing.MinMaxScaler(feature_range=(50, 100)), mclf)
-scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
-csv_out[1].append(np.mean(scores['test_accuracy']))
-csv_out[2].append(np.mean(scores['test_precision_macro']))
-csv_out[3].append(np.mean(scores['test_recall_macro']))
-csv_out[4].append(np.mean(scores['test_f1_macro']))
-
-
-classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), sclf)
-scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
-csv_out[1].append(np.mean(scores['test_accuracy']))
-csv_out[2].append(np.mean(scores['test_precision_macro']))
-csv_out[3].append(np.mean(scores['test_recall_macro']))
-csv_out[4].append(np.mean(scores['test_f1_macro']))
-
-
-classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), myknn)
-scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
-csv_out[1].append(np.mean(scores['test_accuracy']))
-csv_out[2].append(np.mean(scores['test_precision_macro']))
-csv_out[3].append(np.mean(scores['test_recall_macro']))
-csv_out[4].append(np.mean(scores['test_f1_macro']))
-
-
-fd = open('EvalueationMetric_10fold.csv','w')
+fd = open('EvaluationMetric_10fold.csv','w')
 for i in range(len(csv_out)):
 	for j in range(len(csv_out[i])):
-		fd.write(str(csv_out[i][j])+"\t")
+		if(i > 0 and j > 0):
+			fd.write(str(round(csv_out[i][j],5))+"\t")
+		else:
+			fd.write(str(csv_out[i][j])+"\t")
 	fd.write("\n")
 
 fd.close()

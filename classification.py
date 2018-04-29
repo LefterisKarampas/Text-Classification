@@ -12,13 +12,14 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.feature_extraction.text import TfidfVectorizer
 import knn
+from nltk.stem.snowball import SnowballStemmer
 
 #Read Train Data
 train_data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-#train_data = train_data[0:2000]
+train_data = train_data[0:2000]
 
 test_data = pd.read_csv('../datasets/test_set.csv', sep="\t")
-#test_data = test_data[0:100]
+test_data = test_data[0:100]
 
 
 #Initialize Encoder
@@ -27,7 +28,17 @@ le.fit(train_data["Category"])
 y = le.transform(train_data["Category"])
 
 
-tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False,stop_words=ENGLISH_STOP_WORDS)
+#Stemming
+stemmer = SnowballStemmer('english')
+analyzer = TfidfVectorizer().build_analyzer()
+
+
+def stemmed_words(doc):
+    return (stemmer.stem(w) for w in analyzer(doc))
+
+
+#tfid_vectorizer = StemmedTfidfVectorizer(min_df=1, stop_words='english', analyzer=ENGLISH_STOP_WORDS, ngram_range=(1,1))
+tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False,stop_words=ENGLISH_STOP_WORDS,analyzer=stemmed_words)
 #X = count_vectorizer.fit_transform(data['Content']+5*data['Title'])
 X = tfid_vectorizer.fit_transform(train_data['Content']+10*(" "+train_data['Title']))
 Y = tfid_vectorizer.transform(test_data['Content']+10*(" "+test_data['Title']))
@@ -39,7 +50,7 @@ lsa_Y = lsa.transform(Y)
 
 Scaler = MinMaxScaler(feature_range=(50,100))
 Scaler_X = Scaler.fit_transform(lsa_X)
-Scaler_Y = Scaler.fit(lsa_Y)
+Scaler_Y = Scaler.transform(lsa_Y)
 
 #Train classifiers
 rclf = RandomForestClassifier()
