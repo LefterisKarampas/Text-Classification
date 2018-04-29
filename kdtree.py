@@ -113,12 +113,16 @@ class KDTree:
         #if we still have more near neighbours to find
         #or it is possible to find a neighbour that is nearer than
         #the less nearest neigbour in our list
-        if len(nearest) < numNearest or (target[axis] - node.data[axis])**self.k < nearest[-1][0]:
+        if len(nearest) < numNearest or self.maxDistance(target[axis], node.data[axis]) < nearest[-1][0]:
             nearest = self.nearest_neighbours(nearest, further, target, numNearest, depth+1)
 
     nearest = self.update_nearest(nearest, node, target, numNearest)
     return nearest
 
+  def maxDistance(self, axisValue1, axisValue2):
+    point1 = [axisValue1 for i in range(self.k)]
+    point2 = [axisValue2 for i in range(self.k)]
+    return self.distFunction(point1, point2)
 
   def insert(self, point, id):
     if (self.root == None):
