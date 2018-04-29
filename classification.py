@@ -13,13 +13,14 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.feature_extraction.text import TfidfVectorizer
 import knn
 from nltk.stem.snowball import SnowballStemmer
+import csv
 
 #Read Train Data
 train_data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-#train_data = train_data[0:2000]
+train_data = train_data[0:2000]
 
 test_data = pd.read_csv('../datasets/test_set.csv', sep="\t")
-#test_data = test_data[0:100]
+test_data = test_data[0:100]
 
 
 #Initialize Encoder
@@ -86,10 +87,10 @@ predicted_categories = le.inverse_transform(MNBy_pred)
 # predicted_categories = le.inverse_transform(KNNy_pred)
 # print(predicted_categories)
 
+with open('testSet_categories.csv', 'wb') as csvfile:
+    csvwriter = csv.writer(csvfile, delimiter=',',
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    csvwriter.writerow(['Id','Category'])
+    for i in range(len(test_data['Id'])):
+      csvwriter.writerow([str(test_data['Id'][i]),predicted_categories[i]])
 
-fd = open('testSet_categories.csv','w')
-fd.write("ID"+"\t"+"Predicted_Category\n")
-for i in range(len(test_data['Id'])):
-	fd.write(str(test_data['Id'][i])+"\t"+predicted_categories[i]+"\n")
-
-fd.close()
