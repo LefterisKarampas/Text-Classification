@@ -19,7 +19,7 @@ import knn
 
 
 data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-data = data[0:400]
+#data = data[0:2000]
 
 
 le = preprocessing.LabelEncoder()
@@ -27,12 +27,11 @@ le.fit(data["Category"])
 y = le.transform(data["Category"])
 
 
-
 #Initialize CounterVectorizer
 #count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS)
 tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False,stop_words=ENGLISH_STOP_WORDS)
 #X = count_vectorizer.fit_transform(data['Content']+5*data['Title'])
-X = tfid_vectorizer.fit_transform(data['Content']+5*data['Title'])
+X = tfid_vectorizer.fit_transform(data['Content']+10*data['Title'])
 
 #LSA - SVD
 lsa = TruncatedSVD(n_components=25, n_iter=7, random_state=42)
@@ -44,9 +43,9 @@ rclf = RandomForestClassifier()
 
 mclf = MultinomialNB(alpha=0.01)
 
-sclf = svm.SVC(kernel='rbf', C = 10,gamma=1)
+sclf = svm.SVC(kernel='linear', C = 1000,gamma=0.1)
 
-myknn = knn.KNN(20)
+myknn = knn.KNN(50)
 
 
 classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), rclf)

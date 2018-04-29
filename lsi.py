@@ -16,42 +16,44 @@ from sklearn.model_selection import KFold,cross_val_score
 from sklearn.pipeline import make_pipeline
 from sklearn import cross_validation
 import knn
+import matplotlib.pyplot as plt
 
 
 data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-#data = data[0:200]
 
 le = preprocessing.LabelEncoder()
 le.fit(data["Category"])
 y = le.transform(data["Category"])
 
 
-#Initialize CounterVectorizer
-#count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS)
+#Initialize TfidfVectorizer
 tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False,stop_words=ENGLISH_STOP_WORDS)
-#X = count_vectorizer.fit_transform(data['Content']+5*data['Title'])
-X = tfid_vectorizer.fit_transform(data['Content']+5*data['Title'])
+X = tfid_vectorizer.fit_transform(data['Content']+10*data['Title'])
 
-sclf = svm.SVC(kernel='rbf', C = 10,gamma=1)
+sclf = svm.SVC(kernel='linear', C = 1000,gamma=0.1)
 
-components = range(1,20,5)
-print(components)
+components = range(10,101,5)
 
 max_value = 0
 index = None
-acurracy = []
+accuracy = []
+fd = open('lsi_results','w')
 #LSA - SVD
 for i in components:
-	#lsa = TruncatedSVD(n_components=i, n_iter=7, random_state=42)
 	lsa = TruncatedSVD(n_components=i)
 	lsa_X = lsa.fit_transform(X)
-	classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), sclf)
-	scores = cross_validation.cross_val_score(classifier_pipeline, lsa_X, y, cv=10)
-	acurracy.append(scores.mean())
+	lsa_X = preprocessing.StandardScaler().fit_transform(lsa_X)
+	scores = cross_validation.cross_val_score(sclf, lsa_X, y, cv=10)
+	print(str(i)+": "+str(scores.mean())+"\n")
+	fd.write(str(i)+": "+str(scores.mean())+"\n")
+	accuracy.append(scores.mean())
 	if(scores.mean() > max_value):
 		max_value = scores.mean()
 		index = i
-
+fd.close()
 print('Acurracy: '+str(max_value)+' in components: '+str(index))
-
-print(acurracy)
+plt.plot(components,accuracy)
+plt.xlabel("Number of components")
+plt.ylabel("Accuracy")
+plt.savefig('Components.png')
+plt.show()
