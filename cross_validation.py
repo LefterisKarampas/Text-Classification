@@ -22,7 +22,7 @@ import knn
 
 
 data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-data = data[0:400]
+data = data[0:100]
 
 
 le = preprocessing.LabelEncoder()
@@ -50,10 +50,21 @@ sclf = svm.SVC(kernel='linear', C = 1000,gamma=0.1)
 
 myknn = knn.KNN(50)
 
+
+csv_out = [['Statistic Measure','Naive Bayes','Random_Forest','SVM','KNN','My Method'],
+		['Accuracy'],
+		['Precision'],
+		['Recall'],
+		['F-Measure']]
+
 scoring = ['accuracy','precision_macro', 'recall_macro','f1_macro']
 
 classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), rclf)
 scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
+csv_out[1].append(np.mean(scores['test_accuracy']))
+csv_out[2].append(np.mean(scores['test_precision_macro']))
+csv_out[3].append(np.mean(scores['test_recall_macro']))
+csv_out[4].append(np.mean(scores['test_f1_macro']))
 print('Random_Forest: \n' +"\tAccuracy: "+str(np.mean(scores['test_accuracy']))+"\n")
 print("\tPrecision: "+str(np.mean(scores['test_precision_macro']))+"\n")
 print("\tRecall: "+str(np.mean(scores['test_recall_macro']))+"\n")
@@ -62,6 +73,10 @@ print("\tF-measure: "+str(np.mean(scores['test_f1_macro']))+"\n\n")
 
 classifier_pipeline = make_pipeline(preprocessing.MinMaxScaler(feature_range=(50, 100)), mclf)
 scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
+csv_out[1].append(np.mean(scores['test_accuracy']))
+csv_out[2].append(np.mean(scores['test_precision_macro']))
+csv_out[3].append(np.mean(scores['test_recall_macro']))
+csv_out[4].append(np.mean(scores['test_f1_macro']))
 print('MultinomiaNB: \n' +"\tAccuracy: "+str(np.mean(scores['test_accuracy']))+"\n")
 print("\tPrecision: "+str(np.mean(scores['test_precision_macro']))+"\n")
 print("\tRecall: "+str(np.mean(scores['test_recall_macro']))+"\n")
@@ -70,6 +85,10 @@ print("\tF-measure: "+str(np.mean(scores['test_f1_macro']))+"\n\n")
 
 classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), sclf)
 scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
+csv_out[1].append(np.mean(scores['test_accuracy']))
+csv_out[2].append(np.mean(scores['test_precision_macro']))
+csv_out[3].append(np.mean(scores['test_recall_macro']))
+csv_out[4].append(np.mean(scores['test_f1_macro']))
 print('SVM: \n' +"\tAccuracy: "+str(np.mean(scores['test_accuracy']))+"\n")
 print("\tPrecision: "+str(np.mean(scores['test_precision_macro']))+"\n")
 print("\tRecall: "+str(np.mean(scores['test_recall_macro']))+"\n")
@@ -77,8 +96,20 @@ print("\tF-measure: "+str(np.mean(scores['test_f1_macro']))+"\n\n")
 
 classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), myknn)
 scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
+csv_out[1].append(np.mean(scores['test_accuracy']))
+csv_out[2].append(np.mean(scores['test_precision_macro']))
+csv_out[3].append(np.mean(scores['test_recall_macro']))
+csv_out[4].append(np.mean(scores['test_f1_macro']))
 print('KNN: \n' +"\tAccuracy: "+str(np.mean(scores['test_accuracy']))+"\n")
 print("\tPrecision: "+str(np.mean(scores['test_precision_macro']))+"\n")
 print("\tRecall: "+str(np.mean(scores['test_recall_macro']))+"\n")
 print("\tF-measure: "+str(np.mean(scores['test_f1_macro']))+"\n\n")
 
+
+fd = open('EvalueationMetric_10fold.csv','w')
+for i in range(len(csv_out)):
+	for j in range(len(csv_out[i])):
+		fd.write(str(csv_out[i][j])+"\t")
+	fd.write("\n")
+
+fd.close()
