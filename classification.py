@@ -17,10 +17,10 @@ import csv
 
 #Read Train Data
 train_data = pd.read_csv('../datasets/train_set.csv', sep="\t")
-train_data = train_data[0:2000]
+#train_data = train_data[0:2000]
 
 test_data = pd.read_csv('../datasets/test_set.csv', sep="\t")
-test_data = test_data[0:100]
+#test_data = test_data[0:100]
 
 
 #Initialize Encoder
@@ -45,7 +45,7 @@ X = tfid_vectorizer.fit_transform(train_data['Content']+10*(" "+train_data['Titl
 Y = tfid_vectorizer.transform(test_data['Content']+10*(" "+test_data['Title']))
 
 #LSA - SVD
-lsa = TruncatedSVD(n_components=25, n_iter=7, random_state=42)
+lsa = TruncatedSVD(n_components=50, n_iter=7, random_state=42)
 lsa_X = lsa.fit_transform(X)
 lsa_Y = lsa.transform(Y)
 
@@ -60,7 +60,7 @@ rclf.fit(lsa_X, y)
 mclf = MultinomialNB()
 mclf.fit(Scaler_X,y)
 
-sclf = svm.SVC(kernel='linear', C = 100,gamma=0.1)
+sclf = svm.SVC(kernel='linear', C = 1000,gamma=0.1)
 sclf.fit(lsa_X,y)
 
 myknn = knn.KNN(50)
@@ -72,14 +72,14 @@ myknn.fit(lsa_X,y)
 # print(predicted_categories)
 
 # #MultinomiaNB
-MNBy_pred = mclf.predict(Scaler_Y)
-predicted_categories = le.inverse_transform(MNBy_pred)
+#MNBy_pred = mclf.predict(Scaler_Y)
+#predicted_categories = le.inverse_transform(MNBy_pred)
 #print(predicted_categories)
 
-# #SVM
-# SVMy_pred = sclf.predict(lsa_Y)
-# predicted_categories = le.inverse_transform(SVMy_pred)
-# print(predicted_categories)
+#SVM
+SVMy_pred = sclf.predict(lsa_Y)
+predicted_categories = le.inverse_transform(SVMy_pred)
+print(predicted_categories)
 
 
 # #KNN
