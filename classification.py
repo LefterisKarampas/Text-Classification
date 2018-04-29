@@ -29,8 +29,8 @@ y = le.transform(train_data["Category"])
 
 tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False,stop_words=ENGLISH_STOP_WORDS)
 #X = count_vectorizer.fit_transform(data['Content']+5*data['Title'])
-X = tfid_vectorizer.fit_transform(train_data['Content']+10*train_data['Title'])
-Y = tfid_vectorizer.transform(test_data['Content']+10*test_data['Title'])
+X = tfid_vectorizer.fit_transform(train_data['Content']+10*(" "+train_data['Title']))
+Y = tfid_vectorizer.transform(test_data['Content']+10*(" "+test_data['Title']))
 
 #LSA - SVD
 lsa = TruncatedSVD(n_components=25, n_iter=7, random_state=42)

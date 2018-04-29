@@ -35,9 +35,9 @@ y_test = le.transform(test_data["Category"])
 #count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS)
 tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False,stop_words=ENGLISH_STOP_WORDS)
 #X = count_vectorizer.fit_transform(train_data['Content']+5*train_data['Title'])
-X = tfid_vectorizer.fit_transform(train_data['Content']+5*train_data['Title'])
+X = tfid_vectorizer.fit_transform(train_data['Content']+5*(" "+train_data['Title']))
 #Y = count_vectorizer.transform(test_data['Content']+5*test_data['Title'])
-Y = tfid_vectorizer.transform(test_data['Content']+5*test_data['Title'])
+Y = tfid_vectorizer.transform(test_data['Content']+5*(" "+test_data['Title']))
 
 
 #LSA
