@@ -37,8 +37,8 @@ train_text = train_data['Content']+titleWeight*(" " + train_data['Title'])
 text_text = test_data['Content']+titleWeight*(" " + test_data['Title'])
 
 train_X, test_X = stem_and_tfidf(train_text, text_text)
-features_num = 500
-#train_X, test_X = select_features(train_X, y_test, test_X, features_num)
+features_num = 2000
+train_X, test_X = select_features(train_X, y, test_X, features_num)
 
 #SVM
 sclf = svm.SVC(kernel='linear', C = 301,gamma=0.01)
