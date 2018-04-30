@@ -35,7 +35,7 @@ test_data = pd.read_csv('../datasets/test_set.csv', sep="\t")
 le = preprocessing.LabelEncoder()
 le.fit(train_data["Category"])
 y = le.transform(train_data["Category"])
-y_test = le.transform(test_data["Category"])
+#y_test = le.transform(test_data["Category"])
 
 titleWeight = 5
 train_text = train_data['Content']+titleWeight*(" " + train_data['Title'])

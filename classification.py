@@ -41,30 +41,30 @@ def stemmed_words(doc):
 #tfid_vectorizer = StemmedTfidfVectorizer(min_df=1, stop_words='english', analyzer=ENGLISH_STOP_WORDS, ngram_range=(1,1))
 tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False,stop_words=ENGLISH_STOP_WORDS,analyzer=stemmed_words)
 #X = count_vectorizer.fit_transform(data['Content']+5*data['Title'])
-X = tfid_vectorizer.fit_transform(train_data['Content']+10*(" "+train_data['Title']))
-Y = tfid_vectorizer.transform(test_data['Content']+10*(" "+test_data['Title']))
+X = tfid_vectorizer.fit_transform(train_data['Content']+5*(" "+train_data['Title']))
+Y = tfid_vectorizer.transform(test_data['Content']+5*(" "+test_data['Title']))
 
 #LSA - SVD
-lsa = TruncatedSVD(n_components=50, n_iter=7, random_state=42)
-lsa_X = lsa.fit_transform(X)
-lsa_Y = lsa.transform(Y)
+#lsa = TruncatedSVD(n_components=25, n_iter=7, random_state=42)
+lsa_X = X#lsa.fit_transform(X)
+lsa_Y = Y#lsa.transform(Y)
 
-Scaler = MinMaxScaler(feature_range=(50,100))
-Scaler_X = Scaler.fit_transform(lsa_X)
-Scaler_Y = Scaler.transform(lsa_Y)
+# Scaler = MinMaxScaler(feature_range=(50,100))
+# Scaler_X = Scaler.fit_transform(lsa_X)
+# Scaler_Y = Scaler.transform(lsa_Y)
 
-#Train classifiers
-rclf = RandomForestClassifier()
-rclf.fit(lsa_X, y)
+# #Train classifiers
+# rclf = RandomForestClassifier()
+# rclf.fit(lsa_X, y)
 
-mclf = MultinomialNB()
-mclf.fit(Scaler_X,y)
+# mclf = MultinomialNB()
+# mclf.fit(Scaler_X,y)
 
-sclf = svm.SVC(kernel='linear', C = 1000,gamma=0.1)
+sclf = svm.SVC(kernel='linear', C = 301,gamma=0.01)
 sclf.fit(lsa_X,y)
 
-myknn = knn.KNN(50)
-myknn.fit(lsa_X,y)
+# myknn = knn.KNN(50)
+# myknn.fit(lsa_X,y)
 
 # #Random_Forest
 # RFy_pred = rclf.predict(lsa_Y)
