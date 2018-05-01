@@ -1,25 +1,12 @@
 from __future__ import division
 import math
 import operator
-
-
-#Paste this in Train_Test.py bottom to test
-# myknn = knn.KNN(5)
-# myknn.fit(X.toarray(),y)
-# KNN_pred = myknn.predict(Y.toarray())
-# predicted_categories = le.inverse_transform(KNN_pred)
-# print classification_report(y_test, KNN_pred, target_names=list(le.classes_))
-
-def euclideanDistance(array1, array2):
-  length = len(array1)
-  distance = 0
-  for x in range(length):
-    distance += pow((array1[x] - array2[x]), 2)
-  return math.sqrt(distance)
+from dist_fucntions import *
 
 class KNN:
-  def __init__(self, k):
+  def __init__(self, k, distFunction = euclideanDistance):
     self.k = k
+    self.distFunction = distFunction
 
   def score(self, testSet, testSetLabels):
     predictedLabels = self.predict(testSet)
@@ -32,12 +19,11 @@ class KNN:
     return count / size
 
 
-  #trainSet must be and array
   def fit(self, trainSet, trainSetLabels):
     self.trainSet = trainSet
     self.trainSetLabels = trainSetLabels
 
-  #testSet must be and array
+
   def predict(self, testSet):
     resultLabels = []
 
@@ -57,7 +43,7 @@ class KNN:
 
     #for each element in out train set
     for i in range(trainSize):
-      distance = euclideanDistance(trainSet[i], featuresArray)
+      distance = self.distFunction(trainSet[i], featuresArray)
       indexAndDist = (i,distance)
       distances.append(indexAndDist)
 

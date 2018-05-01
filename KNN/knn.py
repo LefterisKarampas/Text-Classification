@@ -20,13 +20,12 @@ class KNN:
     return count / size
 
 
-  #trainSet must be and array
   def fit(self, trainSet, trainSetLabels):
     dims = len(trainSet[0])
     self.trainSetKDTree = KDTree(dims, self.distFunction, float_compare,
      trainSet, trainSetLabels)
 
-  #testSet must be and array
+
   def predict(self, testSet):
     resultLabels = []
 
