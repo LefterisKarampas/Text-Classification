@@ -15,11 +15,40 @@ from sklearn.model_selection import KFold,cross_val_score
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import recall_score
+from nltk.stem.snowball import SnowballStemmer
 import numpy as np
 import sys
 sys.path.insert(0,'../KNN/')
 
 import knn
+stopwords = set(ENGLISH_STOP_WORDS)
+
+stopwords.add("yes")
+stopwords.add("no")
+stopwords.add("know")
+stopwords.add("also")
+stopwords.add("told")
+stopwords.add("one")
+stopwords.add("two")
+stopwords.add("first")
+stopwords.add("last")
+stopwords.add("new")
+stopwords.add("say")
+stopwords.add("year")
+stopwords.add("thing")
+stopwords.add("something")
+stopwords.add("now")
+stopwords.add("said")
+stopwords.add("even")
+stopwords.add("will")
+stopwords.add("although")
+stopwords.add("always")
+stopwords.add("often")
+stopwords.add("day")
+stopwords.add("us")
+stopwords.add("years")
+stopwords.add("another")
+stopwords.add("came")
 
 data = pd.read_csv('../datasets/train_set.csv', sep="\t")
 
@@ -33,7 +62,15 @@ titleWeight = 5
 X = data['Content']+titleWeight*(" "+data['Title'])
 
 #Initialize Transformer
-tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False,stop_words=ENGLISH_STOP_WORDS)
+#Stemming
+stemmer = SnowballStemmer('english')
+analyzer = TfidfVectorizer().build_analyzer()
+
+def stemmed_words(doc):
+    return (stemmer.stem(w) for w in analyzer(doc))
+
+
+tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=True,stop_words=stopwords,analyzer=stemmed_words)
 X = tfid_vectorizer.fit_transform(X)
 
 #LSA - SVD
@@ -42,16 +79,11 @@ lsa_X = lsa.fit_transform(X)
 
 
 #Train classifiers
-rclf = RandomForestClassifier()
-
-mclf = MultinomialNB(alpha=0.01)
 
 sclf = svm.SVC(kernel='linear', C = 1000,gamma=0.01)
 
-myknn = knn.KNN(20)
 
-
-csv_out = [['Statistic Measure','Naive Bayes','Random_Forest','SVM','KNN','My Method'],
+csv_out = [['Statistic Measure','My Method'],
 		['Accuracy'],
 		['Precision'],
 		['Recall'],
@@ -59,13 +91,10 @@ csv_out = [['Statistic Measure','Naive Bayes','Random_Forest','SVM','KNN','My Me
 
 scoring = ['accuracy','precision_macro', 'recall_macro','f1_macro']
 
-classifiers = [rclf,mclf,sclf,myknn]
+classifiers = [sclf]
 
 for classifier in classifiers:
-	if(classifier == mclf):
-		classifier_pipeline = make_pipeline(preprocessing.MinMaxScaler(feature_range=(50, 100)), classifier)
-	else:	
-		classifier_pipeline = make_pipeline(classifier)
+	classifier_pipeline = make_pipeline(classifier)
 	scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
 	csv_out[1].append(np.mean(scores['test_accuracy']))
 	csv_out[2].append(np.mean(scores['test_precision_macro']))
@@ -74,7 +103,7 @@ for classifier in classifiers:
 
 
 
-fd = open('EvaluationMetric_10fold.csv','w')
+fd = open('MyMethod.csv','w')
 for i in range(len(csv_out)):
 	for j in range(len(csv_out[i])):
 		if(i > 0 and j > 0):

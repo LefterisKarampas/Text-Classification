@@ -11,7 +11,6 @@ from sklearn import preprocessing
 from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.feature_extraction.text import TfidfVectorizer
-import knn
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.cross_validation import train_test_split
 import csv
@@ -19,6 +18,11 @@ from sklearn.feature_selection import SelectKBest, chi2
 from nltk import stem
 from nltk.corpus import stopwords
 from preprocessing import *
+
+import sys
+sys.path.insert(0,'../KNN/')
+
+import knn
 
 #Read Train Data
 #data = pd.read_csv('../datasets/train_set.csv', sep="\t")

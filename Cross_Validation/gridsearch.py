@@ -25,7 +25,7 @@ titleWeight = 5
 X = tfid_vectorizer.fit_transform(data['Content']+titleWeight*(" "+data['Title']))
 
 #LSA - SVD
-lsa = TruncatedSVD(n_components=25, n_iter=7, random_state=42)
+lsa = TruncatedSVD(n_components=85, n_iter=7, random_state=42)
 lsa_X =lsa.fit_transform(X)
 
 #lsa_X = X
