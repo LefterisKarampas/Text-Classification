@@ -39,7 +39,7 @@ def stemmed_words(doc):
 
 
 #tfid_vectorizer = StemmedTfidfVectorizer(min_df=1, stop_words='english', analyzer=ENGLISH_STOP_WORDS, ngram_range=(1,1))
-tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False,stop_words=ENGLISH_STOP_WORDS,analyzer=stemmed_words)
+tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=True,stop_words=ENGLISH_STOP_WORDS,analyzer=stemmed_words)
 #X = count_vectorizer.fit_transform(data['Content']+5*data['Title'])
 X = tfid_vectorizer.fit_transform(train_data['Content']+5*(" "+train_data['Title']))
 Y = tfid_vectorizer.transform(test_data['Content']+5*(" "+test_data['Title']))
@@ -60,7 +60,7 @@ lsa_Y = Y#lsa.transform(Y)
 # mclf = MultinomialNB()
 # mclf.fit(Scaler_X,y)
 
-sclf = svm.SVC(kernel='linear', C = 301,gamma=0.01)
+sclf = svm.SVC(kernel='linear', C = 1000,gamma=0.01)
 sclf.fit(lsa_X,y)
 
 # myknn = knn.KNN(50)

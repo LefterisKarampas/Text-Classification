@@ -29,13 +29,13 @@ le = preprocessing.LabelEncoder()
 le.fit(data["Category"])
 y = le.transform(data["Category"])
 
-X = data['Content']+10*(" "+data['Title'])
+X = data['Content']+5*(" "+data['Title'])
 #Initialize CounterVectorizer
 #count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS)
 #X = count_vectorizer.fit_transform(data['Content']+10*(" "+data['Title']))
 
 #Initialize Transformer
-tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False)
+tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=True)
 X = tfid_vectorizer.fit_transform(X)
 
 #LSA - SVD
@@ -48,7 +48,7 @@ rclf = RandomForestClassifier()
 
 mclf = MultinomialNB(alpha=0.01)
 
-sclf = svm.SVC(kernel='linear', C = 1000,gamma=0.1)
+sclf = svm.SVC(kernel='linear', C = 1000,gamma=0.01)
 
 myknn = knn.KNN(20)
 
