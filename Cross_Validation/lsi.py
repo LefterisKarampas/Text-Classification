@@ -5,18 +5,13 @@ from sklearn import svm
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import classification_report
 from sklearn import preprocessing
-from sklearn.cross_validation import train_test_split
 from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import KFold,cross_val_score
 from sklearn.pipeline import make_pipeline
 from sklearn import cross_validation
 from sklearn.model_selection import cross_validate
-import knn
 import matplotlib.pyplot as plt
 
 

@@ -9,33 +9,31 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import classification_report
 from sklearn import preprocessing
-from sklearn.cross_validation import train_test_split
 from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import KFold,cross_val_score
 from sklearn.pipeline import make_pipeline
-from sklearn import cross_validation
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import recall_score
 import numpy as np
-import knn
+import sys
+sys.path.insert(0,'../KNN/')
 
+import knn
 
 data = pd.read_csv('../datasets/train_set.csv', sep="\t")
 
-
-
+#Initialize Encoder
 le = preprocessing.LabelEncoder()
 le.fit(data["Category"])
 y = le.transform(data["Category"])
 
-X = data['Content']+5*(" "+data['Title'])
-#Initialize CounterVectorizer
-#count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS)
-#X = count_vectorizer.fit_transform(data['Content']+10*(" "+data['Title']))
+
+titleWeight = 5
+X = data['Content']+titleWeight*(" "+data['Title'])
 
 #Initialize Transformer
-tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=True)
+tfid_vectorizer = TfidfVectorizer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=True,stop_words=ENGLISH_STOP_WORDS)
 X = tfid_vectorizer.fit_transform(X)
 
 #LSA - SVD
@@ -61,13 +59,13 @@ csv_out = [['Statistic Measure','Naive Bayes','Random_Forest','SVM','KNN','My Me
 
 scoring = ['accuracy','precision_macro', 'recall_macro','f1_macro']
 
-classifiers = [rclf,mclf,sclf,myknn]
+classifiers = [rclf,mclf,sclf,myknn,sclf]
 
 for classifier in classifiers:
 	if(classifier == mclf):
 		classifier_pipeline = make_pipeline(preprocessing.MinMaxScaler(feature_range=(50, 100)), classifier)
 	else:	
-		classifier_pipeline = make_pipeline(preprocessing.StandardScaler(), classifier)
+		classifier_pipeline = make_pipeline(classifier)
 	scores = cross_validate(classifier_pipeline, lsa_X, y, cv=10,scoring=scoring)
 	csv_out[1].append(np.mean(scores['test_accuracy']))
 	csv_out[2].append(np.mean(scores['test_precision_macro']))
